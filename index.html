@@ -43,17 +43,17 @@
   <script>
     async function refreshData() {
       try {
-        // Lấy giá vàng thế giới từ API của metals-api
-        //const goldRes = await fetch('https://api.exchangerate.host/latest?base=XAU&symbols=USD');
-        const goldRes = await fetch('https://corsproxy.io/?https://api.exchangerate.host/latest?base=XAU&symbols=USD');
-        
+        const goldURL = 'https://api.exchangerate.host/latest?base=XAU&symbols=USD';
+        const fxURL = 'https://api.exchangerate.host/latest?base=USD&symbols=VND';
+
+        // Lấy giá vàng thế giới thông qua proxy khác
+        const goldRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(goldURL));
         const goldData = await goldRes.json();
-        const goldPriceUSD = 1 / goldData.rates.USD * 31.1035; // chuyển 1 ounce vàng sang USD
+        const goldPriceUSD = 1 / goldData.rates.USD * 31.1035;
         document.getElementById('goldPrice').value = goldPriceUSD.toFixed(2);
 
-        // Lấy tỷ giá USD/VND từ exchangerate.host
-        //const fxRes = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=VND');
-        const fxRes = await fetch('https://corsproxy.io/?https://api.exchangerate.host/latest?base=USD&symbols=VND');
+        // Lấy tỷ giá USD/VND thông qua proxy khác
+        const fxRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(fxURL));
         const fxData = await fxRes.json();
         const usdToVnd = fxData.rates.VND;
         document.getElementById('exchangeRate').value = usdToVnd.toFixed(0);
@@ -75,7 +75,6 @@
         'Giá vàng quy đổi: ' + pricePerLuong.toLocaleString('vi-VN') + ' VNĐ/lượng';
     }
 
-    // Tự động load khi vào trang
     refreshData();
   </script>
 </body>
