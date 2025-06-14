@@ -41,25 +41,30 @@
   <div class="result" id="result"></div>
 
   <script>
+    async function fetchWithAllOrigins(url) {
+      const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url));
+      const data = await res.json();
+      return JSON.parse(data.contents);
+    }
+
     async function refreshData() {
       try {
         const goldURL = 'https://api.exchangerate.host/latest?base=XAU&symbols=USD';
         const fxURL = 'https://api.exchangerate.host/latest?base=USD&symbols=VND';
 
-        // Lấy giá vàng thế giới thông qua proxy khác
-        const goldRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(goldURL));
-        const goldData = await goldRes.json();
+        // Lấy giá vàng thế giới thông qua allorigins
+        const goldData = await fetchWithAllOrigins(goldURL);
         const goldPriceUSD = 1 / goldData.rates.USD * 31.1035;
         document.getElementById('goldPrice').value = goldPriceUSD.toFixed(2);
 
-        // Lấy tỷ giá USD/VND thông qua proxy khác
-        const fxRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(fxURL));
-        const fxData = await fxRes.json();
+        // Lấy tỷ giá USD/VND thông qua allorigins
+        const fxData = await fetchWithAllOrigins(fxURL);
         const usdToVnd = fxData.rates.VND;
         document.getElementById('exchangeRate').value = usdToVnd.toFixed(0);
 
         calculate();
       } catch (error) {
+        console.error(error);
         alert('Không thể lấy dữ liệu, vui lòng thử lại sau.');
       }
     }
@@ -79,3 +84,4 @@
   </script>
 </body>
 </html>
+
