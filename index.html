@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -41,10 +43,10 @@
   <div class="result" id="result"></div>
 
   <script>
-    async function fetchWithAllOrigins(url) {
-      const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url));
-      const data = await res.json();
-      return JSON.parse(data.contents);
+    async function fetchWithProxy(url) {
+      const proxyUrl = 'https://thingproxy.freeboard.io/fetch/' + url;
+      const res = await fetch(proxyUrl);
+      return await res.json();
     }
 
     async function refreshData() {
@@ -52,13 +54,11 @@
         const goldURL = 'https://api.exchangerate.host/latest?base=XAU&symbols=USD';
         const fxURL = 'https://api.exchangerate.host/latest?base=USD&symbols=VND';
 
-        // Lấy giá vàng thế giới thông qua allorigins
-        const goldData = await fetchWithAllOrigins(goldURL);
+        const goldData = await fetchWithProxy(goldURL);
         const goldPriceUSD = 1 / goldData.rates.USD * 31.1035;
         document.getElementById('goldPrice').value = goldPriceUSD.toFixed(2);
 
-        // Lấy tỷ giá USD/VND thông qua allorigins
-        const fxData = await fetchWithAllOrigins(fxURL);
+        const fxData = await fetchWithProxy(fxURL);
         const usdToVnd = fxData.rates.VND;
         document.getElementById('exchangeRate').value = usdToVnd.toFixed(0);
 
@@ -84,4 +84,3 @@
   </script>
 </body>
 </html>
-
