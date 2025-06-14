@@ -44,13 +44,16 @@
     async function refreshData() {
       try {
         // Lấy giá vàng thế giới từ API của metals-api
-        const goldRes = await fetch('https://api.exchangerate.host/latest?base=XAU&symbols=USD');
+        //const goldRes = await fetch('https://api.exchangerate.host/latest?base=XAU&symbols=USD');
+        const goldRes = await fetch('https://corsproxy.io/?https://api.exchangerate.host/latest?base=XAU&symbols=USD');
+        
         const goldData = await goldRes.json();
         const goldPriceUSD = 1 / goldData.rates.USD * 31.1035; // chuyển 1 ounce vàng sang USD
         document.getElementById('goldPrice').value = goldPriceUSD.toFixed(2);
 
         // Lấy tỷ giá USD/VND từ exchangerate.host
-        const fxRes = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=VND');
+        //const fxRes = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=VND');
+        const fxRes = await fetch('https://corsproxy.io/?https://api.exchangerate.host/latest?base=USD&symbols=VND');
         const fxData = await fxRes.json();
         const usdToVnd = fxData.rates.VND;
         document.getElementById('exchangeRate').value = usdToVnd.toFixed(0);
