@@ -59,8 +59,8 @@
         const goldPriceUSD = goldData.price;
         document.getElementById('goldPrice').value = goldPriceUSD.toFixed(2);
 
-        // Gọi tỷ giá từ frankfurter.app
-        const fxRes = await fetch("https://api.frankfurter.app/latest?base=USD&symbols=VND");
+        // Gọi tỷ giá từ open api
+        const fxRes = await fetch("https://open.er-api.com/v6/latest/USD");
         const fxData = await fxRes.json();
         const usdToVnd = fxData.rates.VND;
         document.getElementById('exchangeRate').value = usdToVnd.toFixed(0);
