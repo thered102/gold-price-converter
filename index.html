@@ -43,19 +43,24 @@
   <script>
     async function refreshData() {
       try {
-        // Lấy giá vàng từ GoldAPI
-        const goldRes = await fetch("https://www.goldapi.io/api/XAU/USD", {
-          headers: {
-            "x-access-token": "goldapi-gfa7zsmbwf17cj-io",
-            "Content-Type": "application/json"
-          }
-        });
+        // Gọi GoldAPI.io để lấy giá vàng
+        const myHeaders = new Headers();
+        myHeaders.append("x-access-token", "goldapi-gfa7zsmbwf17cj-io");
+        myHeaders.append("Content-Type", "application/json");
+
+        const requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+        const goldRes = await fetch("https://www.goldapi.io/api/XAU/USD", requestOptions);
         const goldData = await goldRes.json();
         const goldPriceUSD = goldData.price;
         document.getElementById('goldPrice').value = goldPriceUSD.toFixed(2);
 
-        // Lấy tỷ giá USD/VND từ Frankfurter (free, không cần key)
-        const fxRes = await fetch("https://api.frankfurter.app/latest?from=USD&to=VND");
+        // Gọi tỷ giá từ frankfurter.app
+        const fxRes = await fetch("https://api.frankfurter.app/latest?base=USD&symbols=VND");
         const fxData = await fxRes.json();
         const usdToVnd = fxData.rates.VND;
         document.getElementById('exchangeRate').value = usdToVnd.toFixed(0);
@@ -82,4 +87,3 @@
   </script>
 </body>
 </html>
-
