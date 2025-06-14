@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chuyển đổi giá vàng</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      color: #cc9900;
+    }
+    input, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin: 0.25rem 0;
+      width: 100%;
+    }
+    .result {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chuyển đổi giá vàng theo tỷ giá</h1>
+  <label>Giá vàng thế giới (USD/ounce):</label>
+  <input type="number" id="goldPrice" step="0.01">
+
+  <label>Tỷ giá USD/VND:</label>
+  <input type="number" id="exchangeRate">
+
+  <button onclick="calculate()">Tính giá vàng VNĐ/cây</button>
+  <button onclick="refreshData()">Làm mới dữ liệu</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    async function refreshData() {
+      try {
+        // Lấy giá vàng thế giới từ API của metals-api
+        const goldRes = await fetch('https://api.exchangerate.host/latest?base=XAU&symbols=USD');
+        const goldData = await goldRes.json();
+        const goldPriceUSD = 1 / goldData.rates.USD * 31.1035; // chuyển 1 ounce vàng sang USD
+        document.getElementById('goldPrice').value = goldPriceUSD.toFixed(2);
+
+        // Lấy tỷ giá USD/VND từ exchangerate.host
+        const fxRes = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=VND');
+        const fxData = await fxRes.json();
+        const usdToVnd = fxData.rates.VND;
+        document.getElementById('exchangeRate').value = usdToVnd.toFixed(0);
+
+        calculate();
+      } catch (error) {
+        alert('Không thể lấy dữ liệu, vui lòng thử lại sau.');
+      }
+    }
+
+    function calculate() {
+      const goldPrice = parseFloat(document.getElementById('goldPrice').value);
+      const exchangeRate = parseFloat(document.getElementById('exchangeRate').value);
+
+      const pricePerOunceVND = goldPrice * exchangeRate;
+      const pricePerLuong = pricePerOunceVND * 1.20565303;
+
+      document.getElementById('result').innerText =
+        'Giá vàng quy đổi: ' + pricePerLuong.toLocaleString('vi-VN') + ' VNĐ/lượng';
+    }
+
+    // Tự động load khi vào trang
+    refreshData();
+  </script>
+</body>
+</html>
